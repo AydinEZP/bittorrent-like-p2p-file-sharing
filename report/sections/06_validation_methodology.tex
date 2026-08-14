@@ -1,0 +1,27 @@
+\section{Validation Methodology}
+\label{sec:validation}
+
+The repository provides a standard-library-only test runner, \texttt{run\_all\_tests.py}. Tests create deterministic local payloads, bind tracker and peer services to loopback addresses, and write disposable outputs under ignored directories. No external tracker, dataset, or API is required.
+
+\begin{table}[tbp]
+  \centering
+  \caption{Test groups executed by the supplied runner.}
+  \label{tab:test-groups}
+  \begin{tabularx}{\textwidth}{@{}p{0.28\textwidth}Y@{}}
+    \toprule
+    \tablehead{Test group} & \tablehead{Primary coverage} \\
+    \midrule
+    Metainfo & Single-file and multi-file creation, field validation, path safety, piece hashes, and cross-file boundaries. \\
+    Logger & Header validation, concurrent writers, field sanitization, and atomic updates. \\
+    Tracker state & Registration, completion, stopping, peer counts, timeout cleanup, and concurrent updates. \\
+    Tracker HTTP & Announce parsing, binary URL values, response encoding, errors, and concurrent requests. \\
+    Tracker client & URL generation, Bencode parsing, peer filtering, and progress events. \\
+    Peer PING & Framing, partial reads, message-size limits, PING/PONG, and reachability results. \\
+    Piece transfer & Bitfields, piece requests, valid storage, corrupt-piece rejection, and multi-file reconstruction. \\
+    Torrent thread pool & Independent workers, concurrent downloads, progress accounting, and shutdown. \\
+    Final integration & Demo preparation, two-torrent transfer, byte comparison, repository audit, and submission-archive checks. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+The validation evidence is functional rather than performance-oriented. The materials do not specify throughput benchmarks, wide-area latency experiments, stress-test scale, or comparative baselines. Accordingly, no performance or scalability claim is made.

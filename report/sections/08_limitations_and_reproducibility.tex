@@ -1,0 +1,22 @@
+\section{Limitations and Reproducibility}
+\label{sec:limitations}
+
+\subsection{Protocol limitations}
+
+The implementation adopts selected BitTorrent concepts but defines its own metainfo and peer wire formats. JSON metainfo is not a standard binary \texttt{.torrent} file, and peer messages are length-prefixed JSON with Base64 piece data. The project does not implement rarest-first selection, end-game mode, tit-for-tat, NAT traversal, transport encryption, authentication, or a distributed hash table. Tracker and peer demonstrations use loopback networking.
+
+SHA-1 verifies that a piece matches the metainfo, but the implementation does not establish who produced the metainfo or authenticate a remote peer. The supplied materials do not document an adversarial threat model, Internet deployment, sustained-load testing, or resource-isolation policy. These omissions limit any security or scalability interpretation.
+
+\subsection{Reproduction procedure}
+
+The implementation has no third-party Python dependency. A reproduction run requires Python 3.10 or newer and permission to bind local loopback ports. From the repository root, the complete test sequence is launched with:
+
+\begin{lstlisting}[language=bash,numbers=none]
+python run_all_tests.py
+\end{lstlisting}
+
+The tests create their own small payloads and output trees. Generated data, logs, caches, and submission archives are ignored by version control. The supplied materials do not specify the original Python patch version or a complete operating-system configuration, so exact-environment equivalence cannot be claimed.
+
+\subsection{Publication boundaries}
+
+The release excludes generated outputs, the redundant nested submission archive, bytecode caches, bundled fonts with unclear redistribution terms, the old PDF export, and six screenshots that display an absolute local path. Four project-generated loopback packet-capture screenshots are retained because they support the network-flow discussion without exposing the student identifier, email, credential, or private filesystem location.

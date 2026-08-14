@@ -1,0 +1,17 @@
+{
+  "announce": "http://127.0.0.1:8000/announce",
+  "info": {
+    "name": "sample_single.bin",
+    "length": 771,
+    "piece length": 128,
+    "pieces": [
+      "e6434bc401f98603d7eda504790c98c67385d535",
+      "87f0c35852e65ad707f37c05fb03dc6e68aa4fbf",
+      "e6434bc401f98603d7eda504790c98c67385d535",
+      "87f0c35852e65ad707f37c05fb03dc6e68aa4fbf",
+      "e6434bc401f98603d7eda504790c98c67385d535",
+      "87f0c35852e65ad707f37c05fb03dc6e68aa4fbf",
+      "d205abee3d2a71688a6b66568be289a94050031c"
+    ]
+  }
+}

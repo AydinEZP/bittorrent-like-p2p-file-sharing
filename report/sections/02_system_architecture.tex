@@ -1,0 +1,49 @@
+\section{System Architecture}
+\label{sec:architecture}
+
+Each peer reads the metainfo locally. The tracker receives HTTP announcements and returns peer endpoints; it never serves file pieces. Direct TCP connections carry peer-protocol messages and piece data. This separation is summarized in \cref{fig:architecture}.
+
+\begin{figure}[H]
+  \centering
+  \resizebox{0.96\textwidth}{!}{%
+  \begin{tikzpicture}[
+    >=stealth,
+    node distance=15mm and 20mm,
+    component/.style={draw=Navy,fill=PaletteBlue!18!white,rounded corners=1.5mm,minimum width=42mm,minimum height=12mm,align=center},
+    peer/.style={draw=Teal,fill=PalettePeach,rounded corners=1.5mm,minimum width=42mm,minimum height=12mm,align=center},
+    flow/.style={very thick,->,Navy},
+    direct/.style={very thick,<->,Teal}
+  ]
+    \node[component] (meta) {JSON metainfo\\read locally};
+    \node[component,below=of meta] (tracker) {HTTP tracker\\peer discovery};
+    \node[peer,below left=of tracker] (seed) {Seeder peer\\piece server};
+    \node[peer,below right=of tracker] (leech) {Leecher peer\\piece client};
+
+    \draw[flow,dashed] (meta.south west) -- (seed.north);
+    \draw[flow,dashed] (meta.south east) -- (leech.north);
+    \draw[flow] (seed.north) -- node[left,fill=white,font=\small] {announce} (tracker.south west);
+    \draw[flow] (leech.north) -- node[right,fill=white,font=\small] {announce} (tracker.south east);
+    \draw[direct] (seed.east) -- node[above,fill=white,font=\small] {framed TCP messages} (leech.west);
+  \end{tikzpicture}%
+  }
+  \caption{Control-plane discovery through the tracker and direct peer-to-peer data transfer.}
+  \label{fig:architecture}
+\end{figure}
+
+\subsection{Torrent lifecycle}
+
+For each metainfo file, a worker performs the following sequence:
+
+\begin{enumerate}
+  \item load and validate the metainfo;
+  \item scan local storage to establish the initial bitfield;
+  \item start a peer server on a dedicated port;
+  \item announce the \texttt{started} event to the tracker;
+  \item discover peers and probe them with PING/PONG;
+  \item request availability, express interest, and download missing pieces;
+  \item verify every piece before storing it;
+  \item send periodic progress announcements; and
+  \item send \texttt{completed} and \texttt{stopped} events when applicable.
+\end{enumerate}
+
+Multiple metainfo files are represented as separate jobs in a thread pool. Their storage managers, network listeners, and transfer statistics remain distinct while they share the same application process.

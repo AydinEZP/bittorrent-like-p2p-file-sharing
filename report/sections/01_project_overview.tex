@@ -1,0 +1,39 @@
+\section{Project Overview and Objectives}
+\label{sec:overview}
+
+The project demonstrates a central architectural property of peer-to-peer file sharing: discovery and control information can be coordinated by a tracker without routing the transferred file through that tracker. The implementation is a simplified, locally runnable system based on requirements described in the course project handout \citep{courseBrief} and protocol concepts referenced from BEP 3 \citep{bep3}. It is not intended to be a compatible replacement for a standard BitTorrent client.
+
+\subsection{Objectives}
+
+The implemented workflow addresses five concrete objectives:
+
+\begin{enumerate}
+  \item describe single-file and multi-file payloads as pieces with expected hashes;
+  \item register peers with a tracker and return swarm membership and statistics;
+  \item exchange framed control and piece messages directly between peers;
+  \item verify each received piece before making it available locally; and
+  \item support concurrent torrent workers with auditable event logs.
+\end{enumerate}
+
+\subsection{Implementation inventory}
+
+\begin{table}[H]
+  \centering
+  \caption{Principal implementation components in the supplied project.}
+  \label{tab:components}
+  \begin{tabularx}{\textwidth}{@{}p{0.25\textwidth}Y@{}}
+    \toprule
+    \tablehead{Component} & \tablehead{Responsibility} \\
+    \midrule
+    Metainfo parser & Validates JSON metainfo, normalizes single-file and multi-file layouts, and calculates the torrent information hash. \\
+    Tracker server and state & Processes HTTP announce requests, records peers by torrent, removes expired peers, and returns Bencoded responses. \\
+    Tracker client & Encodes binary identifiers into announce URLs and parses tracker responses. \\
+    Peer server and client & Exchanges reachability, availability, interest, and piece messages over framed TCP connections. \\
+    Piece manager & Maps a torrent to local files, scans available pieces, verifies SHA-1 hashes, and reads or writes piece ranges. \\
+    Torrent workers & Runs independent transfer lifecycles and periodic tracker announcements for multiple torrents. \\
+    Event logger & Serializes timestamped tracker and peer events using per-path locks and atomic file replacement. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+The code depends only on Python standard-library modules such as \texttt{http.server}, \texttt{socket}, \texttt{threading}, and \texttt{hashlib} \citep{pythonStdlib}. Type-union syntax used by the source requires Python 3.10 or newer.

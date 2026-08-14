@@ -1,0 +1,32 @@
+\section{Piece Management, Concurrency, and Logging}
+\label{sec:piece-management}
+
+\subsection{Virtual file layout}
+
+The piece manager converts the metainfo layout into a sequence of file segments with absolute offsets in the virtual torrent stream. Reads and writes are intersected with these segments, allowing one piece operation to span several local files. On startup, the manager scans existing storage and marks a piece available only when both its length and SHA-1 value match the metainfo.
+
+For received bytes $p_i$ and expected hash $h_i$, acceptance requires
+
+\begin{equation}
+  \mathrm{SHA1}(p_i) = h_i.
+  \label{eq:piece-integrity}
+\end{equation}
+
+A mismatch raises a dedicated error and leaves the piece unavailable. This check supports integrity within the project workflow; it does not authenticate the source peer.
+
+\subsection{Concurrent services}
+
+The tracker handles HTTP requests on separate threads and synchronizes shared swarm state. Each peer server accepts TCP connections and dispatches client handling concurrently. At application level, the torrent thread pool creates one worker per metainfo job, assigns a listening port, and tracks progress independently. A stop event coordinates graceful shutdown.
+
+The design separates two measurements:
+
+\begin{itemize}
+  \item the piece manager represents durable availability inferred from local files; and
+  \item transfer statistics represent bytes uploaded and downloaded during the current worker session.
+\end{itemize}
+
+This distinction prevents pre-existing valid pieces from being reported as bytes downloaded in the current run.
+
+\subsection{Event logging}
+
+The event logger records a file header followed by timestamped \texttt{event | time | description} rows. Inputs are normalized to one line, access is guarded by a per-path re-entrant lock, and updates are written to a temporary file before atomic replacement. Tracker and peer components use event names such as \texttt{ANNOUNCE\_RECEIVED}, \texttt{PING\_SENT}, \texttt{PIECE\_RECEIVED}, \texttt{HASH\_VALID}, and \texttt{PIECE\_STORED}.

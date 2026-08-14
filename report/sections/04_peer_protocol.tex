@@ -1,0 +1,44 @@
+\section{Peer Protocol and Direct Transfer}
+\label{sec:peer-protocol}
+
+\subsection{Message framing}
+
+TCP presents a byte stream rather than message boundaries. The implementation prefixes each JSON body with a four-byte unsigned length in network byte order:
+
+\begin{equation}
+  \mathrm{frame} =
+  \mathrm{uint32\_be}(\lvert\mathrm{payload}\rvert)
+  \mathbin{\Vert} \mathrm{JSON\ payload}.
+  \label{eq:frame}
+\end{equation}
+
+The receive routine repeatedly reads until the declared number of bytes has arrived, so a message split across multiple TCP packets is reconstructed before JSON decoding. The default maximum frame size is eight MiB. The peer vocabulary includes \texttt{PING}, \texttt{PONG}, \texttt{BITFIELD}, \texttt{INTERESTED}, \texttt{UNCHOKE}, \texttt{REQUEST}, \texttt{PIECE}, and \texttt{ERROR}.
+
+\subsection{Reachability and availability}
+
+PING messages contain a random nonce and sender identifier. A valid PONG returns the same nonce, which lets the initiating peer associate the response with its probe. Once a peer is reachable, the client requests its bitfield, expresses interest when useful pieces are available, and waits for an unchoke response before requesting a piece.
+
+\subsection{Piece exchange}
+
+Piece bytes are Base64-encoded in the JSON body. This is easy to inspect but adds encoding overhead compared with a binary peer protocol. \Cref{alg:piece-cycle} summarizes the implemented validation cycle.
+
+\begin{algorithm}[H]
+  \caption{Validated piece request cycle}
+  \label{alg:piece-cycle}
+  \begin{algorithmic}[1]
+    \Require peer endpoint, local piece manager, missing piece index $i$
+    \State connect to the peer and request its bitfield
+    \If{piece $i$ is unavailable}
+      \State close the connection and select another peer
+    \EndIf
+    \State send \texttt{INTERESTED} and require \texttt{UNCHOKE}
+    \State send \texttt{REQUEST} for piece $i$
+    \State decode the returned Base64 piece bytes
+    \State verify the declared index, length, and expected SHA-1 hash
+    \If{verification succeeds}
+      \State store the piece and update session counters
+    \Else
+      \State reject the bytes and log \texttt{HASH\_INVALID}
+    \EndIf
+  \end{algorithmic}
+\end{algorithm}

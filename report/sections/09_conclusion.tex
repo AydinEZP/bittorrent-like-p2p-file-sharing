@@ -1,0 +1,6 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+The project provides a coherent educational implementation of tracker-assisted peer-to-peer file sharing. It separates peer discovery from payload transport, supports single-file and multi-file metainfo, frames peer messages over TCP, verifies each piece before storage, and coordinates several torrent workers concurrently. The test suite covers individual parsing and state components as well as complete loopback transfer and byte-for-byte reconstruction.
+
+The implementation's strongest contribution is the integration of these concerns in a standard-library-only codebase with explicit event logging and reproducible local tests. Its scope is deliberately narrower than BitTorrent: custom JSON formats, loopback validation, and omitted production policies make it suitable as a networking course project rather than a general-purpose client.

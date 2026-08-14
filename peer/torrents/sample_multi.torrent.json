@@ -1,0 +1,26 @@
+{
+  "announce": "http://127.0.0.1:8000/announce",
+  "info": {
+    "name": "sample_bundle",
+    "files": [
+      {
+        "length": 150,
+        "path": [
+          "file1.bin"
+        ]
+      },
+      {
+        "length": 170,
+        "path": [
+          "file2.bin"
+        ]
+      }
+    ],
+    "piece length": 128,
+    "pieces": [
+      "f24a678d689f90dff5638a33be459d8e9dabbc83",
+      "da5ea7a8259f2ca6bb72a08e35885e4e252f4c73",
+      "5312cf7278cd1041634a4068a58267b672ac1b43"
+    ]
+  }
+}

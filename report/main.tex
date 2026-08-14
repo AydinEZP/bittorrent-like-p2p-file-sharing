@@ -1,0 +1,93 @@
+\documentclass[11pt,a4paper]{article}
+\input{metadata}
+\input{preamble}
+
+\hypersetup{
+  pdftitle={\ProjectTitle},
+  pdfauthor={\ProjectAuthor},
+  pdfsubject={\CourseName\ project report},
+  pdfkeywords={\ProjectKeywords}
+}
+
+\begin{document}
+\pagenumbering{gobble}
+
+\begin{titlepage}
+  \thispagestyle{empty}
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[PaletteBlue] (current page.north west) rectangle ([yshift=-5.2cm]current page.north east);
+    \fill[PalettePink] ([yshift=-5.2cm]current page.north west) rectangle ([yshift=-5.38cm]current page.north east);
+    \fill[PaletteYellow] ([xshift=22mm,yshift=20mm]current page.south west) rectangle ([xshift=25mm,yshift=52mm]current page.south west);
+    \fill[PalettePink] ([xshift=0mm,yshift=7mm]current page.south west) rectangle ([xshift=.25\paperwidth,yshift=10mm]current page.south west);
+    \fill[PaletteYellow] ([xshift=.25\paperwidth,yshift=7mm]current page.south west) rectangle ([xshift=.50\paperwidth,yshift=10mm]current page.south west);
+    \fill[PaletteBlue] ([xshift=.50\paperwidth,yshift=7mm]current page.south west) rectangle ([xshift=.75\paperwidth,yshift=10mm]current page.south west);
+    \fill[PalettePeach] ([xshift=.75\paperwidth,yshift=7mm]current page.south west) rectangle ([xshift=\paperwidth,yshift=10mm]current page.south west);
+  \end{tikzpicture}
+
+  \vspace*{0.3cm}
+  {\color{Ink}\Large\bfseries \CourseName\par}
+  \vspace{0.1cm}
+  {\color{Ink}\large \UniversityName\par}
+
+  \vspace{3.4cm}
+  {\color{Navy}\fontsize{25}{31}\selectfont\bfseries \ProjectTitle\par}
+  \vspace{0.7cm}
+  {\color{Teal}\large Technical Project Report\par}
+  \vspace{0.45cm}
+  {\color{Gold}\rule{0.28\textwidth}{2.2pt}\par}
+
+  \vfill
+  \begin{tcolorbox}[
+    colback=PalettePeach,
+    colframe=PalettePink!55!black,
+    boxrule=0.7pt,
+    arc=1.5mm,
+    left=5mm,right=5mm,top=4mm,bottom=4mm]
+  \renewcommand{\arraystretch}{1.35}
+  \begin{tabularx}{\linewidth}{
+    @{}>{\bfseries\color{Navy}}l@{\hspace{1.5cm}}>{\raggedright\arraybackslash}X@{}}
+    Project author & \ProjectAuthor \\
+    Implementation & Python standard library \\
+    Communication model & HTTP tracker discovery and direct TCP peer transfer \\
+    Validation scope & Static review and isolated local test execution \\
+  \end{tabularx}
+  \end{tcolorbox}
+
+  \vspace{0.8cm}
+  {\small\color{Muted}
+  This report documents the supplied implementation and supported results. Details absent from the project materials are not inferred.\par}
+\end{titlepage}
+\clearpage
+\pagenumbering{roman}
+
+\begin{abstract}
+  \input{sections/00_abstract}
+\end{abstract}
+\clearpage
+
+\tableofcontents
+\clearpage
+\listoffigures
+\vspace{2em}
+\listoftables
+\clearpage
+
+\pagenumbering{arabic}
+
+\input{sections/01_project_overview}
+\input{sections/02_system_architecture}
+\input{sections/03_metainfo_and_tracker}
+\input{sections/04_peer_protocol}
+\input{sections/05_piece_management_and_concurrency}
+\input{sections/06_validation_methodology}
+\input{sections/07_results}
+\input{sections/08_limitations_and_reproducibility}
+\input{sections/09_conclusion}
+
+\bibliography{references}
+
+\clearpage
+\appendix
+\input{sections/appendix_execution_guide}
+
+\end{document}

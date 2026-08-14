@@ -1,0 +1,38 @@
+\section{Metainfo and Tracker Design}
+\label{sec:metainfo-tracker}
+
+\subsection{Human-readable metainfo}
+
+The project stores metainfo in JSON rather than the binary \texttt{.torrent} format. The \texttt{announce} field contains either one tracker URL or a list whose first entry is selected. The \texttt{info} dictionary contains the payload name, piece length, piece hashes, and either one total length or a list of files.
+
+For total payload length $L_{\mathrm{total}}$ and piece length $L_{\mathrm{piece}}$, the expected number of pieces is
+
+\begin{equation}
+  N_{\mathrm{pieces}} =
+  \left\lceil \frac{L_{\mathrm{total}}}{L_{\mathrm{piece}}} \right\rceil .
+  \label{eq:piece-count}
+\end{equation}
+
+In multi-file mode, the listed files form one virtual byte stream. A piece may therefore begin near the end of one file and continue in the next. The parser validates required fields, positive lengths, hash syntax, piece count, and path components. Absolute paths, parent-directory traversal, and unsafe separators are rejected.
+
+\subsection{Deterministic information hash}
+
+The \texttt{info} dictionary is Bencoded with sorted dictionary keys and hashed with SHA-1:
+
+\begin{equation}
+  \mathrm{info\_hash} =
+  \mathrm{SHA1}\!\left(\mathrm{Bencode}(\mathrm{info})\right).
+  \label{eq:info-hash}
+\end{equation}
+
+This keeps torrent identity independent of the outer JSON layout while preserving deterministic encoding for the implemented field types.
+
+\subsection{Tracker state and HTTP interface}
+
+The tracker uses Python's \texttt{ThreadingHTTPServer}. Announce requests provide the information hash, peer identifier, listening port, uploaded and downloaded counters, remaining bytes, and an optional event. Binary identifiers are decoded from percent-encoded URL bytes.
+
+Tracker state is grouped first by \texttt{info\_hash} and then by \texttt{peer\_id}. An \texttt{RLock} protects concurrent updates, while a cleanup thread removes peers that have not announced within the configured timeout. Successful responses contain the announce interval, complete and incomplete counts, and the peer list in Bencoded form.
+
+\begin{importantnote}
+The tracker is a discovery and state-coordination service. The implementation does not read, cache, or relay the shared payload.
+\end{importantnote}

@@ -1,0 +1,211 @@
+% Shared LaTeX configuration derived from the supplied report template.
+% Compile with pdfLaTeX + BibTeX (no shell-escape required).
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+\usepackage[a4paper,margin=25mm,headheight=22pt]{geometry}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{tabularx}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{natbib}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage{xparse}
+\usepackage{etoolbox}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+% ---------- Color palette ----------
+% User-selected Color Hunt palette:
+% Pink #FF84BA, Yellow #FFDF82, Blue #99C2FF, Peach #FFEFE3.
+% Darker derived tones are used where higher contrast is required.
+\definecolor{PalettePink}{HTML}{FF84BA}
+\definecolor{PaletteYellow}{HTML}{FFDF82}
+\definecolor{PaletteBlue}{HTML}{99C2FF}
+\definecolor{PalettePeach}{HTML}{FFEFE3}
+
+\colorlet{Navy}{PaletteBlue!48!black}
+\colorlet{Teal}{PalettePink!60!black}
+\colorlet{Gold}{PaletteYellow!76!black}
+\colorlet{Sky}{PaletteBlue!24!white}
+\colorlet{PaleGold}{PalettePeach}
+\definecolor{Ink}{HTML}{352F36}
+\definecolor{Muted}{HTML}{746B73}
+\colorlet{RuleGray}{PaletteBlue!20!black}
+\colorlet{PlaceholderColor}{PalettePink!62!black}
+\colorlet{CodeBackground}{PalettePeach!62!white}
+
+\color{Ink}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=Navy,
+  citecolor=Teal,
+  urlcolor=Teal,
+  bookmarksopen=true,
+  pdfdisplaydoctitle=true
+}
+
+% ---------- Typography and spacing ----------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\setlist{nosep,leftmargin=1.8em}
+\setlist[enumerate]{label=\arabic*.}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\emergencystretch=2em
+
+\titleformat{\section}
+  {\Large\bfseries\color{Navy}}
+  {\thesection}{0.7em}{}
+  [\vspace{0.15em}\color{Teal}\titlerule]
+\titleformat{\subsection}
+  {\large\bfseries\color{Navy}}
+  {\thesubsection}{0.65em}{}
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{Teal}}
+  {\thesubsubsection}{0.55em}{}
+\titlespacing*{\section}{0pt}{2.2ex plus 0.8ex minus 0.4ex}{1.1ex}
+\titlespacing*{\subsection}{0pt}{1.8ex plus 0.6ex minus 0.3ex}{0.7ex}
+
+% ---------- Header and footer ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{Muted}\CourseName}
+\fancyhead[R]{\small\color{Muted}\ShortProjectTitle}
+\fancyfoot[C]{\small\color{Muted}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{PalettePink!70!black}\leaders\hrule height \headrulewidth\hfill}}
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyhead[L]{\small\color{Muted}\CourseName}
+  \fancyhead[R]{\small\color{Muted}\ShortProjectTitle}
+  \fancyfoot[C]{\small\color{Muted}\thepage}
+  \renewcommand{\headrulewidth}{0.4pt}
+}
+
+% ---------- Tables ----------
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcommand{\tablehead}[1]{\textbf{\color{Navy}#1}}
+\AtBeginEnvironment{tabular}{\small\arrayrulecolor{Navy}}
+\AtBeginEnvironment{tabularx}{\small\arrayrulecolor{Navy}}
+\sisetup{detect-all,group-separator={,},group-minimum-digits=4}
+
+% ---------- Mathematical notation ----------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Normal}{\mathcal{N}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\newcommand{\mat}[1]{\mathbf{#1}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\ind}{\mathbb{I}}
+\newcommand{\trans}{\mathsf{T}}
+
+% ---------- Reusable callout ----------
+\newtcolorbox{importantnote}[1][]{
+  enhanced,
+  colback=PaletteBlue!20!white,
+  colframe=Navy,
+  coltitle=Navy,
+  fonttitle=\bfseries,
+  title={Important note},
+  boxrule=0.7pt,
+  arc=1.5mm,
+  left=1.2mm,right=1.2mm,top=1mm,bottom=1mm,
+  borderline west={2.5pt}{0pt}{PalettePink},
+  lines before break=1,
+  #1
+}
+
+% ---------- Safe figure placeholders ----------
+\newcommand{\missingfigurebox}[2][0.84\linewidth]{%
+  \begingroup
+  \setlength{\fboxsep}{0pt}%
+  \fcolorbox{Navy}{PalettePeach}{%
+    \begin{minipage}[c][0.24\textheight][c]{#1}
+      \centering
+      {\Large\color{Teal}\textbf{Figure placeholder}}\\[0.8em]
+      {\small\color{Muted}\texttt{\detokenize{#2}}}\\[0.7em]
+      {\footnotesize\color{Muted}Replace this box by adding the named file to \texttt{figures/}.}
+    \end{minipage}%
+  }%
+  \endgroup
+}
+
+\NewDocumentEnvironment{reportfigure}{O{0.90\linewidth} m m m}{%
+  \begin{figure}[tbp]
+    \centering
+    \IfFileExists{#2}{%
+      \includegraphics[width=#1]{#2}%
+    }{%
+      \missingfigurebox[#1]{#2}%
+    }
+    \caption{#3}
+    \label{#4}
+  \end{figure}
+}{}
+
+% ---------- Algorithms and code ----------
+\floatname{algorithm}{Algorithm}
+\crefname{algorithm}{algorithm}{algorithms}
+\Crefname{algorithm}{Algorithm}{Algorithms}
+
+% Unique PDF anchors for algorithmic line counters.
+\makeatletter
+\renewcommand{\theHALG@line}{\thealgorithm.\arabic{ALG@line}}
+\makeatother
+\crefname{equation}{equation}{equations}
+\Crefname{equation}{Equation}{Equations}
+
+\lstdefinestyle{projectcode}{
+  language=Python,
+  backgroundcolor=\color{CodeBackground},
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\bfseries\color{Navy},
+  commentstyle=\itshape\color{Muted},
+  stringstyle=\color{Teal},
+  numbers=left,
+  numberstyle=\tiny\color{Muted},
+  numbersep=8pt,
+  frame=single,
+  rulecolor=\color{RuleGray},
+  breaklines=true,
+  showstringspaces=false,
+  columns=fullflexible,
+  keepspaces=true,
+  tabsize=4
+}
+\lstset{style=projectcode}
+
+% ---------- Captions ----------
+\captionsetup{
+  font=small,
+  labelfont={bf,color=Navy},
+  textfont={color=Ink},
+  justification=justified,
+  singlelinecheck=false
+}
+
+% ---------- Bibliography ----------
+\bibliographystyle{plainnat}
+\setcitestyle{authoryear,round,semicolon}

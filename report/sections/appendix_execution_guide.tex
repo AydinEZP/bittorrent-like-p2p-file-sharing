@@ -1,0 +1,36 @@
+\section{Execution Guide}
+\label{app:execution}
+
+\subsection{Automated validation}
+
+Run all nine test groups from the repository root:
+
+\begin{lstlisting}[language=bash,numbers=none]
+python run_all_tests.py
+\end{lstlisting}
+
+The runner creates \texttt{test\_data/} and \texttt{test\_output/}; both are generated and ignored by Git.
+
+\subsection{Automated integrated demo}
+
+The integrated demo starts a loopback tracker, prepares deterministic single-file and multi-file payloads, launches seeder and leecher workers, and verifies the reconstructed files:
+
+\begin{lstlisting}[language=bash,numbers=none]
+python -m tools.end_to_end_demo \
+  --workspace demo_workspace_integrated \
+  --reset
+\end{lstlisting}
+
+\subsection{Manual Windows workflow}
+
+The \texttt{demo/} directory contains five command files. Run them in numeric order. The tracker, seeder, and leecher commands are intentionally separated so their logs and progress can be observed in different terminals.
+
+\begin{lstlisting}[language=bash,numbers=none]
+01_prepare_demo.cmd
+02_run_tracker.cmd
+03_run_seed_peer.cmd
+04_run_leecher_peer.cmd
+05_verify_demo.cmd
+\end{lstlisting}
+
+All default endpoints use \texttt{127.0.0.1}. The tracker defaults to port 8000; the manual seeder and leecher commands begin their peer-port ranges at 6881 and 6891, respectively.
